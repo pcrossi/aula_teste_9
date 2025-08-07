@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <title></title>
+    <link rel="stylesheet" href="dist/reveal.css" />
+    <link rel="stylesheet" href="dist/theme/mattropolis.css" id="theme" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+	<link rel="stylesheet" href="css/layout.css" />
+	<link rel="stylesheet" href="plugin/customcontrols/style.css">
+
+
+
+    <script defer src="dist/fontawesome/all.min.js"></script>
+
+	<script type="text/javascript">
+		var forgetPop = true;
+		function onPopState(event) {
+			if(forgetPop){
+				forgetPop = false;
+			} else {
+				parent.postMessage(event.target.location.href, "app://obsidian.md");
+			}
+        }
+		window.onpopstate = onPopState;
+		window.onmessage = event => {
+			if(event.data == "reload"){
+				window.document.location.reload();
+			}
+			forgetPop = true;
+		}
+
+		function fitElements(){
+			const itemsToFit = document.getElementsByClassName('fitText');
+			for (const item in itemsToFit) {
+				if (Object.hasOwnProperty.call(itemsToFit, item)) {
+					var element = itemsToFit[item];
+					fitElement(element,1, 1000);
+					element.classList.remove('fitText');
+				}
+			}
+		}
+
+		function fitElement(element, start, end){
+
+			let size = (end + start) / 2;
+			element.style.fontSize = `${size}px`;
+
+			if(Math.abs(start - end) < 1){
+				while(element.scrollHeight > element.offsetHeight){
+					size--;
+					element.style.fontSize = `${size}px`;
+				}
+				return;
+			}
+
+			if(element.scrollHeight > element.offsetHeight){
+				fitElement(element, start, size);
+			} else {
+				fitElement(element, size, end);
+			}		
+		}
+
+
+		document.onreadystatechange = () => {
+			fitElements();
+			if (document.readyState === 'complete') {
+				if (window.location.href.indexOf("?export") != -1){
+					parent.postMessage(event.target.location.href, "app://obsidian.md");
+				}
+				if (window.location.href.indexOf("print-pdf") != -1){
+					let stateCheck = setInterval(() => {
+						clearInterval(stateCheck);
+						window.print();
+					}, 250);
+				}
+			}
+	};
+
+
+        </script>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides"><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Uma Análise de Termo-hidráulica e Segurança
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## 1. O Desafio: Refrigeração em Reatores Avançados
+
+- Reatores Nucleares, especialmente os **reatores rápidos**, operam com uma altíssima densidade de potência.
+- Isso significa uma enorme geração de calor em um volume muito pequeno.
+- A escolha do refrigerante é, portanto, uma decisão de projeto crítica.
+- O fluido ideal deve atender a duas exigências fundamentais.
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## 2. Requisitos de um Refrigerante para Reatores Rápidos
+
+- **1. Baixa Moderação de Nêutrons:**
+- O refrigerante não deve frear (moderar) os nêutrons rápidos.
+- Manter o espectro de energia dos nêutrons é essencial para a física do reator.
+- **2. Alta Capacidade de Transferência de Calor:**
+- Deve ser extremamente eficiente para remover o calor intenso do núcleo,
+- evitando o superaquecimento e a fusão do combustível.
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## 3. Por que Refrigerantes Comuns Não Servem?
+
+- **Água (Leve e Pesada):** Excelente na remoção de calor, mas é um forte moderador de nêutrons. Inviável para reatores rápidos.
+- **Gases (Hélio):** Têm baixa capacidade de moderação (vantagem), mas sua capacidade de transferir calor é inerentemente pobre.
+- É aqui que os metais líquidos se destacam, oferecendo o melhor dos dois mundos.
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## 4. Metais Líquidos de Interesse Nuclear
+
+- **Metais Alcalinos (leves e reativos):**
+- **Sódio (Na):** O mais utilizado. Econômico e com excelentes propriedades.
+- **Ligas Sódio-Potássio (NaK):** Líquidas à temperatura ambiente, facilitando a partida.
+- **Lítio (Li):** Interessante por suas propriedades neutrônicas.
+- **Metais Pesados (maior densidade, menos reativos com água):**
+- **Chumbo (Pb)**
+- **Bismuto (Bi)**
+- **Chumbo-Bismuto Eutético (LBE)**
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## 5. Vantagens Termofísicas e de Projeto
+
+- **Alta Temperatura de Operação a Baixa Pressão:**
+- Pontos de ebulição muito altos (`$\text{Na} \approx 883^{\circ}C$`).
+- Permite operar o reator em altas temperaturas sem precisar pressurizar o sistema.
+- Isso aumenta a eficiência termodinâmica e simplifica o projeto do vaso.
+- **Excelente Transferência de Calor:**
+- Condutividade térmica excepcional que homogeneíza a temperatura no núcleo.
+- Reduz "pontos quentes" (*hot spots*) e tensões térmicas.
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## 6. Desafios: O Preço da Alta Performance
+
+- Apesar das vantagens, os metais líquidos impõem desafios significativos:
+- **Radioatividade Induzida:** Tornam-se intensamente radioativos.
+- **Corrosão:** Agressivos quimicamente a altas temperaturas.
+- **Reatividade:** Risco de incêndio (com ar) e explosão (com água).
+- **Solidificação:** Muitos são sólidos à temperatura ambiente.
+- Vamos explorar cada um desses desafios em detalhe.
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## 7. Desafio 1: Radioatividade Induzida
+
+- Ao passar pelo núcleo, o metal líquido é exposto a um intenso fluxo de nêutrons.
+- Ocorre a **ativação por nêutrons**, principalmente por captura (n, γ).
+- `$_{Z}^{A}X + _{0}^{1}n \rightarrow _{Z}^{A+1}X + \gamma$`
+- O isótopo formado (`$_{Z}^{A+1}X$`) é frequentemente instável (radioativo).
+- O circuito primário se torna uma fonte de radiação, exigindo blindagem pesada.
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## 8. Exemplo: Ativação do Sódio (Na)
+
+- O Sódio-23 (estável, 100% do Na natural) captura um nêutron.
+- `${}_{11}^{23}Na + {}_{0}^{1}n \rightarrow {}_{11}^{24}Na + \gamma$`
+- O **Sódio-24 (`$^{24}Na$`)** é um isótopo radioativo com:
+- **Meia-vida de ~15 horas.**
+- Emissão de raios gama de alta energia (1.38 e 2.76 MeV).
+- É a principal fonte de radiação no circuito primário de um reator refrigerado a sódio.
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## 9. Desafio 2: Corrosão por Oxigênio
+
+- O principal agente corrosivo em sistemas com sódio é o **oxigênio dissolvido**.
+- Sódio + Oxigênio `$\rightarrow$` Óxido de Sódio (`$Na_2O$`).
+- O `$Na_2O$` é corrosivo e, pior, tem baixa solubilidade a baixas temperaturas.
+- Ele precipita nas partes mais frias do circuito (trocadores de calor), podendo causar entupimentos.
+- A solução é manter o sódio ultra-puro usando "cold traps" (armadilhas frias).
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## 10. Corrosão: Transferência de Massa
+
+- Um fenômeno destrutivo chamado **transferência de massa por gradiente térmico**:
+- **1. Na parte quente (núcleo):** O sódio dissolve material da tubulação (ex: Fe, Cr).
+- **2. No fluxo:** O sódio transporta esses materiais dissolvidos.
+- **3. Na parte fria (trocador de calor):** A solubilidade diminui e o material se deposita.
+- **Resultado:** A tubulação no núcleo afina e enfraquece, enquanto o trocador de calor pode ser obstruído.
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## 11. Desafio 3: Reatividade e Riscos de Segurança
+
+- **Reação com o Ar:**
+- Sódio líquido queima vigorosamente, produzindo uma fumaça densa de `$Na_2O$`.
+- **Reação com a Água:**
+- Extremamente violenta e exotérmica, podendo ser explosiva em ambientes confinados.
+- `$Na + H_2O \rightarrow NaOH + \frac{1}{2}H_2 + \text{Calor}$`
+- A liberação de hidrogênio (`$H_2$`) inflamável agrava o risco.
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## 12. Mitigação: Contenção e Circuitos Intermediários
+
+- Como lidar com um fluido radioativo e quimicamente reativo?
+- **1. Atmosfera Inerte:**
+- Todas as superfícies livres de sódio são cobertas com um gás inerte (Hélio, Argônio) para prevenir a oxidação e incêndios.
+- **2. Circuitos Intermediários:**
+- Para isolar o sódio radioativo da água do ciclo de potência.
+- **Primário (Na Radioativo)** `$\rightarrow$` **Intermediário (Na Não-Radioativo)** `$\rightarrow$` **Água/Vapor**
+- Garante que um vazamento no gerador de vapor não afete o núcleo.
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## 13. A Física da Transferência de Calor em Metais Líquidos
+
+- Agora, vamos entender *por que* eles são tão eficientes.
+- A chave está na sua altíssima condutividade térmica (`$k$`), graças aos **elétrons livres** que transportam energia eficientemente.
+- O **Número de Prandtl (`$Pr$`)** compara a difusão de momento e de calor.
+- `$Pr = \frac{\nu}{\alpha} = \frac{\text{Difusividade de Momento (Viscosidade)}}{\text{Difusividade Térmica (Condução)}}$`
+- Para metais líquidos, **`$Pr \ll 0.01$`**, indicando que o calor se difunde muito mais rápido que o momento.
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## 14. O Número de Peclet (Pe): O Parâmetro Mestre
+
+- Em metais líquidos, a transferência de calor é governada pela competição entre o calor levado pelo fluxo (convecção) e o calor que se espalha pelo material (condução).
+- O **Número de Peclet (`$Pe$`)** quantifica essa razão.
+- `$Pe = Re \cdot Pr = \frac{D V \rho c_p}{k} = \frac{\text{Transporte de Calor por Convecção}}{\text{Transporte de Calor por Condução}}$`
+- É o parâmetro mais importante nas correlações de transferência de calor para estes fluidos.
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## 15. Correlações de Transferência de Calor em Tubos
+
+- Para escoamento turbulento em tubos, o Número de Nusselt (`$Nu$`) depende de `$Pe$` e da condição de contorno na parede.
+- **1. Fluxo de Calor Constante na Parede (Lyon-Martinelli):**
+- `$Nu = 7.0 + 0.025 \cdot Pe^{0.8}$`
+- **2. Temperatura Uniforme na Parede (Seban-Shimazaki):**
+- `$Nu = 5.0 + 0.025 \cdot Pe^{0.8}$`
+- O termo constante (7.0 ou 5.0) mostra que a condução é significativa mesmo em baixas velocidades.
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## 16. A Importância da Condição de Contorno
+
+- Para fluidos com `$Pr$` alto (água, ar), a diferença entre as duas correlações é pequena.
+- Para metais líquidos (`$Pr \ll 1$`), a diferença é substancial.
+- Escolher a condição de contorno que melhor representa a física do sistema é crucial para a precisão dos cálculos.
+
+<img src="Pasted image 20250807020849.png" alt="" style="width: 500px; object-fit: fill">
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## 17. Escoamento em Geometrias Complexas
+
+- Em reatores, o escoamento ocorre em feixes de varetas ou canais não circulares.
+- **Feixes de Varetas (escoamento cruzado):** Uma correlação empírica com mercúrio resultou em:
+- `$Nu = 4.03 + 0.228 \cdot (Re_m \cdot Pr)^{0.67}$`
+- **Placas Paralelas (aquecimento em uma parede):**
+- `$Nu = 5.8 + 0.02 \cdot Pe^{0.8}$`
+- **Canais Anulares (entre dois tubos):**
+- `$Nu = 5.25 + 0.0188 \cdot Pe^{0.8} \cdot \left(\frac{D_2}{D_1}\right)^{0.3}$`
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## 18. Tópico Avançado: Difusão Axial de Calor
+
+- Em escoamentos de baixa velocidade (`$Pe < 35$`), a condução de calor na direção do fluxo (axial) se torna relevante.
+- Este efeito, geralmente desprezado, reduz o gradiente de temperatura e, consequentemente, o coeficiente de transferência de calor efetivo.
+- O número de Nusselt medido (`$Nu^*$`) é menor que o teórico (`$Nu$`).
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## 19. Corrigindo o Nusselt para Difusão Axial
+
+- A correção para um duto anular onde apenas uma parede é aquecida é:
+- `$\frac{1}{Nu_{i}^{*}} = \frac{1}{Nu_{i}} + \frac{4m_{i}}{Pe^{2}}$`
+- Onde `$m_i$` é um fator geométrico que depende de qual parede (interna ou externa) é aquecida.
+- Para `$Pe=15$`, o `$Nu^*$` pode ser >20% menor que o `$Nu$` não corrigido.
+- Ignorar a difusão axial em baixo `$Pe$` leva a uma superestimação da capacidade de refrigeração.
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## 20. Tópico Avançado: Geração Interna de Calor
+
+- Em **combustíveis fluidos** (ex: Urânio dissolvido em Bismuto), o próprio refrigerante gera calor por fissão.
+- A equação de balanço de energia deve incluir um termo de fonte (`$q'''$`).
+- `$\frac{\partial^{2}t}{\partial r^{2}}+\frac{1}{r}\frac{\partial t}{\partial r}+\frac{q'''}{k}=V(r)\left(\frac{1}{\alpha}\frac{\partial t}{\partial z}\right)$`
+- A transferência de calor se torna muito mais complexa.
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## 21. Geração Interna: Caso Laminar
+
+- Para escoamento laminar, o perfil de velocidade é parabólico:
+- `$V(r) = 2\overline{V}\left[1-\left(\frac{r}{r_{0}}\right)^{2}\right]$`
+- A solução para o perfil de temperatura `$t(r)$` é conhecida.
+- A diferença entre a temperatura da parede (`$t_w$`) e a temperatura média do fluido (`$t_f$`) é:
+- `$t_{w}-t_{f}=\frac{q'''r_{0}^{2}}{k}\left(\frac{11F-8}{48}\right)$`
+- Onde `$F = 1 - \frac{2q_{w}''}{q'''r_{0}}$` relaciona o calor gerado com o calor removido na parede.
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## 22. Geração Interna: Caso Turbulento
+
+- A análise é mais complexa, pois deve-se incluir a difusividade turbulenta (`$\epsilon_h$`).
+- `$(\alpha+\epsilon_{h})\left(\frac{\partial^{2}t}{\partial r^{2}}+\frac{1}{r}\frac{\partial t}{\partial r}\right)+V\frac{\partial t}{\partial z}=\frac{q'''}{\rho c_{p}}$`
+- Uma abordagem comum é o **método da superposição**.
+- O problema é resolvido como a soma de dois casos mais simples:
+- 1. Fluxo de calor na parede sem geração interna.
+- 2. Geração interna com parede adiabática.
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## 23. Aplicação: Bombas para Metais Líquidos
+
+- Para circular esses fluidos, são necessárias bombas especializadas.
+- O design deve resistir a altas temperaturas e à agressividade química do fluido.
+- Existem duas categorias principais:
+- **1. Bombas Mecânicas:**
+- Similares a bombas de água (centrífugas), mas com desafios de materiais.
+- **2. Bombas Eletromagnéticas (EM):**
+- Solução elegante sem partes móveis, ideal para fluidos radioativos.
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## 24. Bombas Mecânicas: Desafios e Soluções
+
+- **Problema Principal:** O metal líquido quente ataca e destrói vedações e rolamentos convencionais.
+- **Soluções de Projeto:**
+- **Eixo Longo:** Afasta o motor e os rolamentos da zona quente.
+- **Vedações com Gás Inerte:** Uma barreira de gás (Hélio, Argônio) impede o contato do metal líquido com a vedação e o ar.
+- **Rotor Enlatado (Canned Rotor):** O motor é hermeticamente selado, eliminando a necessidade de vedação no eixo.
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## 25. Bombas Eletromagnéticas (EM)
+
+- **Princípio de Funcionamento:** Força de Lorentz.
+- `$\vec{F} = I (\vec{L} \times \vec{B})$`
+- 1. Uma **corrente elétrica (`$I$`)** passa através do metal líquido.
+- 2. Um **campo magnético (`$B$`)** é aplicado perpendicularmente.
+- 3. A **força resultante (`$F$`)** impulsiona o fluido sem contato mecânico.
+- **Vantagem:** Altamente confiável por não ter partes móveis.
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## 26. Conclusão e Resumo
+
+- Metais líquidos são cruciais para reatores rápidos devido à sua combinação única de propriedades neutrônicas e térmicas.
+- O uso deles traz desafios significativos de **segurança** (reatividade, radioatividade) e **materiais** (corrosão).
+- A análise de transferência de calor é dominada pelo **Número de Peclet** e é sensível a condições de contorno, geometria e efeitos como difusão axial.
+- Tecnologias especializadas, como bombas EM e sistemas de purificação, são essenciais para uma operação segura e eficiente.
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## Perguntas?
+</div></script></section></div>
+    </div>
+
+    <script src="dist/reveal.js"></script>
+
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/zoom/zoom.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/math/math.js"></script>
+	<script src="plugin/mermaid/mermaid.js"></script>
+	<script src="plugin/chart/chart.min.js"></script>
+	<script src="plugin/chart/plugin.js"></script>
+	<script src="plugin/customcontrols/plugin.js"></script>
+
+    <script>
+      function extend() {
+        var target = {};
+        for (var i = 0; i < arguments.length; i++) {
+          var source = arguments[i];
+          for (var key in source) {
+            if (source.hasOwnProperty(key)) {
+              target[key] = source[key];
+            }
+          }
+        }
+        return target;
+      }
+
+	  function isLight(color) {
+		let hex = color.replace('#', '');
+
+		// convert #fff => #ffffff
+		if(hex.length == 3){
+			hex = `${hex[0]}${hex[0]}${hex[1]}${hex[1]}${hex[2]}${hex[2]}`;
+		}
+
+		const c_r = parseInt(hex.substr(0, 2), 16);
+		const c_g = parseInt(hex.substr(2, 2), 16);
+		const c_b = parseInt(hex.substr(4, 2), 16);
+		const brightness = ((c_r * 299) + (c_g * 587) + (c_b * 114)) / 1000;
+		return brightness > 155;
+	}
+
+	var bgColor = getComputedStyle(document.documentElement).getPropertyValue('--r-background-color').trim();
+	var isLight = isLight(bgColor);
+
+	if(isLight){
+		document.body.classList.add('has-light-background');
+	} else {
+		document.body.classList.add('has-dark-background');
+	}
+
+      // default options to init reveal.js
+      var defaultOptions = {
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+        transition: 'default', // none/fade/slide/convex/concave/zoom
+        plugins: [
+          RevealMarkdown,
+          RevealHighlight,
+          RevealZoom,
+          RevealNotes,
+          RevealMath.MathJax3,
+		  RevealMermaid,
+		  RevealChart,
+		  RevealCustomControls,
+        ],
+
+
+    	allottedTime: 120 * 1000,
+
+		mathjax3: {
+			mathjax: 'plugin/math/mathjax/tex-mml-chtml.js',
+		},
+		markdown: {
+		  gfm: true,
+		  mangle: true,
+		  pedantic: false,
+		  smartLists: false,
+		  smartypants: false,
+		},
+
+		mermaid: {
+			theme: isLight ? 'default' : 'dark',
+		},
+
+		customcontrols: {
+			controls: [
+			]
+		},
+      };
+
+      // options from URL query string
+      var queryOptions = Reveal().getQueryHash() || {};
+
+      var options = extend(defaultOptions, {"width":960,"height":700,"margin":0.04,"controls":true,"progress":true,"slideNumber":false,"transition":"slide","transitionSpeed":"default"}, queryOptions);
+    </script>
+
+    <script>
+      Reveal.initialize(options);
+    </script>
+  </body>
+
+  <!-- created with Advanced Slides -->
+</html>
